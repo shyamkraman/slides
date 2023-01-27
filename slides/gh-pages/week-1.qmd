@@ -1,0 +1,531 @@
+---
+title: Discussion & Lab - Week 1
+subtitle: Data, Distributions, and Probability
+date: 27 January 2023
+author: Shyam Raman
+format: 
+  revealjs:
+    slide-number: c/t
+    width: 1600
+    css: metropolis.css
+    height: 900
+    theme: white
+    logo: logo.png
+    footer: "PAM 3100 - Multiple Regression Analysis - SP23"
+---
+
+
+```{r setup}
+#| echo=F, warning=F, message=F, include = F
+
+pacman::p_load(tidyverse, ggthemes, ggsci)
+
+source("~/Desktop/cellaR/theme_shyam.R")
+
+
+normalDat <- data.frame(id = 1:500,
+            value = rnorm(500, mean = 5, sd = 0.1))
+
+  dist <- normalDat %>% 
+  
+    ggplot(aes(x = value)) +
+    ggdist::geom_dots(color = NA, fill = "#567293", alpha = 0.5) +
+    xlab("Values of Continuous Variable X") +
+    ylab("Distribution Frequency") +
+    labs(color = NULL) +
+    scale_color_nejm() +
+    theme_shyam(base_size = 20) + theme(legend.position = 'none')
+  
+  
+```
+
+
+## Meet Your TA - Shyam
+
+&nbsp;
+
+:::{.incremental}
+
+:::: {.columns}
+
+::: {.column width="75%"}
+
+- My name is pronounced "shahm" and my pronouns are he/him
+- I enjoy teaching! I want to create the best environment for you to learn.
+
+&nbsp;
+
+- I'm a third year PhD candidate in the Brooks School of Public Policy
+  - I study health disparities, substance use, social policy, and inequality
+
+- I grew up in the Midwest & did my undergrad at Indiana University
+  - Background is in public health, epidemiology, and statistics
+  - I worked in public policy consulting for 2 years at MITRE
+
+&nbsp;
+
+- Likes: _the cold, coffee, cooking & baking, impulse purchases, statistics (!!)_
+- Dislikes: _cleaning ice off my car, waking up before 8a, statistics (sometimes)_
+
+:::
+
+::: {.column width="25%" .fragment}
+![My roommate, Hebe](hebe.jpg)
+:::
+
+::::
+
+:::
+
+
+
+
+
+
+## Roadmap for Today's Session
+
+&nbsp;
+
+:::{.incremental}
+
+- Housekeeping & Brief Syllabus Overview
+
+
+&nbsp;
+
+- Review of This Week's Lectures
+  - Data, Variables, and Distributions
+  - Measures of Center and Spread
+  - Probability and the Normal Distribution
+
+&nbsp;
+
+- Lab: **UNGRADED** STATA Proficiency Quiz
+
+:::
+
+
+# Housekeeping & Syllabus Review
+
+## Purpose of discussion sections and STATA labs
+
+&nbsp;
+
+::: {.incremental}
+
+- These discussions are integral to the course goals and curriculum
+  - The lab component is particularly important as we work through projects
+
+&nbsp;
+
+- My goal is preparing you for the work force in public policy analysis
+  - These jobs _expect_ you to have statistical reasoning _and_ analytical skills
+  - Corporate environments with quant folks are focused on replicable, consistent analysis
+
+&nbsp;
+
+- Labs are shifting from application $\rightarrow$ workflow development
+  - The class project ~~should~~ will look like work done at a think tank (Brookings, Urban, etc)
+  - The projects are super valuable for quant jobs asking for writing & data samples
+
+:::
+
+## Attendance, expectations, and accessibility of course content
+
+
+&nbsp;
+
+::: {.incremental}
+
+- Discussion section attendance is not optional and is expected (barring circumstances in the syllabus)
+  - I want to help build your workforce-directed skills! Attend discussions please!
+
+&nbsp;
+
+- Week-to-week, discussions will follow a similar roadmap to today's session
+  - Normally, no syllabus review. Just lecture review (1/3) and lab (2/3)
+  - Later in semester, will allot some discussions **just** for projects
+
+&nbsp;
+
+- All course content will be accessible on Canvas <span style="color:#E64173">within 24 hours of class</span>
+  - Includes my slides, lab solutions, videos of discussion (I will record one per Friday), and notes
+  
+:::
+
+
+
+
+## Office hours, review sessions, and reaching your TAs
+
+&nbsp;
+
+
+::: {.incremental}
+
+- Office hours (M/T/Tr) are meant to provide additional clarification on course content
+  - My OH: <span style="background-color:#567293; color:#FFFFFF; padding:5px">Tuesdays & Thursdays from 9:30a to 11a in MVR 3318</span> (next to Prof. Bottan's office)
+    - I am happy to carve out time via Zoom for folks unable to make these times.
+  - Prof. Bottan's OH: <span style="background-color:#567293; color:#FFFFFF; padding: 5px">Mondays from 9:30 to 11a in MVR 3220</span> (his office)
+
+&nbsp;
+
+- I host review sessions in lieu of office hours for all exams
+  - Study guides are distributed via Canvas. Will answer Qs and clarifications.
+
+&nbsp;
+
+- I am <span style="background-color:#829356; color:#FFFFFF; padding:5px">reliably</span> available via email from <span style="background-color:#829356; color:#FFFFFF; padding:5px">9 to 5 on M thru F</span>
+  - I answer all emails <span style="color:#E64173">within 48 hours</span>: if you haven't heard back, please bump it to the top of my inbox!!
+  
+:::
+
+
+
+
+## Nitpicky things that will make my life easier if you do them (please)
+
+&nbsp;
+
+::: {.incremental}
+
+- I use an email filter to put all class-related messages into a GMail folder
+  - Please include <span style="background-color:#9a2515; color:#FFFFFF; padding:5px">[PAM 3100]</span> in the subject line
+  - Without this, there is a chance it goes to spam! I don't want that!
+
+&nbsp;
+
+- Discussion and OH are meant to complement lecture, but discussion content is lab-focused
+  - Towards the end of semester, I cannot cover discussion materials in OH and
+
+&nbsp;
+
+- Please do not call me <span style="background-color:#E64173; color:#FFFFFF; padding:5px">Mr.</span> or <span style="background-color:#E64173; color:#FFFFFF; padding:5px">Prof.</span> - <span style="background-color:#829356; color:#FFFFFF; padding:5px">Shyam</span> is perfectly fine
+  - My knees make me feel old after walking up stairs. I don't need this too.
+
+:::
+
+
+
+
+## Your mental health and wellbeing should always come before this class
+
+&nbsp;
+
+
+::: {.incremental}
+
+- Your brain is a muscle. It needs food, water, and rest.
+  - You don't have to ask me to leave the room for water or restroom because <span style="background-color:#829356; color:#FFFFFF; padding:5px">you're adults</span>
+
+
+&nbsp;
+
+- Your body needs sun! Seasonal affective disorder (aptly, SAD) is particularly real in Ithaca
+  - Our bodies are programmed to rest when it's dark outside (like 5pm)
+  - <span style="background-color:#567293; color:#FFFFFF; padding:5px">You deserve rest.</span> If coming to discussion is precluding this, please tell me.
+
+&nbsp;
+
+- If you are struggling with your mental health or wellbeing, please reach out if you're comfortable.
+  - While extensions/late assignment policy is firm, content can be made more accessible
+
+:::
+
+
+## Three things that will maximize the benefit of this class for everyone
+
+&nbsp;
+
+::: {.incremental}
+
+- Every question is worth asking. Most questions could be asked better.
+  - <span style="background-color:#E64173; color:#FFFFFF; padding:5px">“I’m confused on variables, can we go over it again?”</span>
+  - <span style="background-color:#829356; color:#FFFFFF; padding:5px">"I'm confused. Can you go over the difference between a discrete and ordinal variable?"</span>
+  
+&nbsp;
+
+- Things only get better with feedback. If something isn't working for you, please tell me.
+  - Most often, others will benefit from things that help you. We learn in similar ways!
+  - I will have small feedback surveys used as attendance points throughout the semester
+
+&nbsp;
+
+- If you can't make it to discussion, please send me an email!
+  - I teach all 4 sections and will always offer attending at a different time
+  - If you want to avoid this offer, tell me in the email that you are out for the day.
+  
+:::
+
+
+ 
+
+
+# Review of This Week's Lectures
+
+
+## What ~~is~~ are data?
+
+&nbsp;
+
+::: {.incremental}
+
+- Data are a collection of information -- data points -- that can be be communicated
+
+&nbsp;
+
+- Datasets come in a rectangular form (columns and rows). We call this "tidy data".
+- Tidy data is constructed of <span style="color:#695693">variables</span>, <span style="color:#9a2515">observations</span>, and <span style="color:#829356">values</span> such that:
+
+  - Each <span style="color:#695693">variable</span> has its own  <span style="color:#695693">column</span>
+  - Each <span style="color:#9a2515">observation</span> has its own <span style="color:#9a2515">row</span>
+  - Each <span style="color:#9a2515">observation</span> has a <span style="color:#829356">value</span> -- or "data point" -- for each <span style="color:#695693">variable</span>
+
+
+:::
+
+## What are <span style="background-color:#695693; color:#FFFFFF; padding:5px">variables</span>? What types of <span style="background-color:#695693; color:#FFFFFF; padding:5px">variables</span> do we use in statistics?
+
+&nbsp;
+
+::: {.incremental}
+
+- Factor (categorical) variables reflect data as belonging to one or more groups
+  - Ordinal variables are distinct, reflecting ordered groups
+
+&nbsp;
+
+- Numerical variables contain information recorded and interpreted as numbers
+  - Discrete -- or count -- variables are integer values $\in 0, 1, \cdots, k$ 
+  - Continuous variables have infinite possible values (integer, decimal, negative)
+
+&nbsp;
+
+- We will focus heavily on continuous variables, their distributions, and characteristics
+
+:::
+
+## A continuous variable forms a <span style="background-color:#F26D21; color:#FFFFFF; padding:5px">distribution</span> of values in a series of data
+
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+normalDat%>% 
+  
+    ggplot(aes(x = value)) +
+    ggdist::geom_dots(color = NA, fill = "#567293") +
+    xlab("Values of Continuous Variable X") +
+    ylab("Distribution Frequency") +
+    labs(color = NULL) +
+    scale_color_nejm() +
+    theme_shyam(base_size = 20) + theme(legend.position = 'none')
+
+
+```
+
+
+
+
+## How do we measure the center of a data?
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist
+
+
+```
+
+
+## How do we measure the center of a data? <span style="background-color:#9a2515; color:#FFFFFF; padding:5px">Median</span>
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist + geom_vline(aes(xintercept = median(value)), color = "#9a2515", size = 3)
+
+
+```
+
+## How do we measure the center of a data? <span style="background-color:#107895; color:#FFFFFF; padding:5px">Mean ($\mu$)</span>
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist + geom_vline(aes(xintercept = mean(value)), color = "#107895", size = 3)
+
+
+```
+
+## How do we measure the spread of data?
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist
+
+
+```
+
+
+
+## How do we measure the spread of data? <span style="background-color:#EBC944; color:#FFFFFF; padding:5px">Range</span>
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist + geom_segment(aes(x = min(value), xend = max(value), y = 0.5, yend = 0.5), color = "#EBC944", size = 3) 
+
+
+```
+
+
+
+## How do we measure the spread of data? <span style="background-color:#F26D21; color:#FFFFFF; padding:5px">Variance</span>
+
+&nbsp;
+
+
+::: {.incremental}
+
+- Variance is the average, squared difference between each data point and the variable's mean.
+  - What does this tell us?
+  
+&nbsp;
+
+- A variable whose distribution has a high variance has many data points far away from the mean
+- A variable whose distribution has a low variance means most data points are clustered around the mean
+
+&nbsp;
+
+- The square root of the variance is the <span style="background-color:#F26D21; color:#FFFFFF; padding:5px">standard deviation ($\sigma$)</span> 
+
+:::
+
+
+
+## How do we measure the spread of data? <span style="background-color:#F26D21; color:#FFFFFF; padding:5px">Standard deviation (SD)</span> 
+
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist +
+   geom_segment(aes(x = mean(value), xend = mean(value) + sd(value), y = 0.75, yend = 0.75), color = "#F26D21", size = 3) 
+
+
+```
+
+
+
+
+
+## How do we measure the spread of data? <span style="background-color:#314F4F; color:#FFFFFF; padding:5px">2 SDs from the mean</span>
+
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+dist +
+   geom_segment(aes(x = mean(value), xend = mean(value) + sd(value), y = 0.75, yend = 0.75), color = "#F26D21", size =3)+
+   geom_segment(aes(x = mean(value), xend = mean(value) + sd(value)*2, y = 0.5, yend = 0.5), color = "#314F4F", size = 3) 
+
+
+```
+
+
+## What kind of distributions do <span style="background-color:#107895; color:#FFFFFF; padding:5px">random variables</span> take?
+
+&nbsp;
+
+::: {.incremental}
+
+- First: what is a <span style="background-color:#107895; color:#FFFFFF; padding:5px">random variable</span>?
+  - Always a **numeric** quantity whose value depends on the outcome of a <span style="color:#107895">random</span> event
+  - A random variable <span style="background-color:#107895; color:#FFFFFF; padding:5px">X</span> has the values <span style="background-color:#107895; color:#FFFFFF; padding:5px">x</span> such that its distribution can provide us the Pr(X = x)
+
+&nbsp;
+
+- Discrete random variables
+  - Are comprised of integer values or counts of something (same as discrete variables)
+  - Have values that form a probability distribution
+
+&nbsp;
+
+- Continuous random variables
+  - Are comprised of real (decimal) values which are not bounded like counts
+  - Have values that form a probability density function (PDF)
+
+
+:::
+
+
+## Consider a <span style="background-color:#107895; color:#FFFFFF; padding:5px">random variable</span> Z ~ N(0,1): this is the <span style="background-color:#EBC944; color:#FFFFFF; padding:5px">Standard normal distribution</span>
+
+
+```{r}
+#| fig.width = 15, fig.height = 8, fig.align = 'center',
+#| message = F, warning = F, eval = T, include = T, echo = F
+
+
+data.frame(id = 1:1000,
+            value = rnorm(1000, mean = 0, sd = 1)) %>% 
+  
+    ggplot(aes(x = value)) +
+    ggdist::geom_dots(color = NA, fill = "#EBC944") +
+    xlab("Values of Random Variable Z ~ N(0,1)") +
+    ylab("Distribution Frequency") +
+    labs(color = NULL) +
+    scale_color_nejm() +
+    theme_shyam(base_size = 20) + theme(legend.position = 'none')
+
+
+```
+
+
+## Using these measures, we can leverage the probability distribution of data
+
+&nbsp;
+
+
+::: {.incremental}
+
+- Often, we'd like to know the probability of drawing a certain value from data distribution. How?
+  - Assuming a <span style="background-color:#EBC944; color:#FFFFFF; padding:5px">standard normal distribution</span>, we can use STATA!
+  - To find the $Pr(Z<c)$, run the command `display normal(c)`. This produces a lower tail probability
+
+&nbsp;
+
+- Other times, we want to know the cut-off value $c$ that gives a probability $p$
+  - Here, we can still use STATA but leverage the "inverse normal" functionality
+  - To find the critical value at which $Pr(Z<c)$, run the command `display invnormal(p)`
+
+:::
+
+
+
+
+
+# Lab: STATA Proficiency Quiz
+
+
+
+
+
